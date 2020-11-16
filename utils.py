@@ -127,12 +127,26 @@ def preprocess_true_boxes(bboxes):
         for i in range(3):
             anchors_xywh = np.zeros((anchor_per_scale, 4))
             anchors_xywh[:, 0:2] = np.floor(bbox_xywh_scaled[i, 0:2]).astype(np.int32) + 0.5
-            print(anchors_xywh[:, 0:2])
             anchors_xywh[:, 2:4] = anchors[i]
+            #just care gt iou achor > 0.3
+            iou_scale = bbox_iou(bbox_xywh_scaled[i][np.newaxis, :], anchors_xywh)
+            iou.append(iou_scale)
+            iou_mask = iou_scale > 0.3
 
-            #iou_scale = bbox_iou(bbox_xywh_scaled[i][np.newaxis, :], anchors_xywh)
-            #iou.append(iou_scale)
-            #iou_mask = iou_scale > 0.3
+            if np.any(iou_mask):
+                #center of gt
+                xind, yind = np.floor(bbox_xywh_scaled[i, 0:2]).astype(np.int32)
+                #label = 
+                label[i][yind, xind, iou_mask, :] = 0
+                label[i][yind, xind, iou_mask, 0:4] = bbox_xywh
+                label[i][yind, xind, iou_mask, 4:5] = 1.0
+                label[i][yind, xind, iou_mask, 5:] = smooth_onehot
+
+                bbox_ind = int(bbox_count[i] % self.max_bbox_per_scale)
+                bboxes_xywh[i][bbox_ind, :4] = bbox_xywh
+                bbox_count[i] += 1
+
+                exist_positive = True
 
 bboxes = [np.array([72, 49, 196, 119, 1])]
 preprocess_true_boxes(bboxes)
