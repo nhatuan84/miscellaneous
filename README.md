@@ -14,3 +14,6 @@ Note: make sure that x_max < width and y_max < height
 E.g: xxx/xxx.jpg 18.19,6.32,424.13,421.83,20 323.86,2.65,640.0,421.94,20
 
 ===============================================================================
+
+http://iamtrask.github.io/
+https://www.youtube.com/watch?v=6uEgLv1Mr2s&feature=emb_logo
