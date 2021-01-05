@@ -4,6 +4,15 @@ import numpy as np
 import os
 import random
 
+def get_sampler(dataset):
+    weights = [0] * 2
+    for entry in dataset:
+        weights[entry[2]] += 1
+    weights = [1/i for i in weights]  
+    sample_weight = np.array(([float(weights[i[2]]) for i in dataset]))
+    sample_weight /= sample_weight.sum()
+    sample_count = len(sample_weight)
+    return np.random.choice(sample_count, sample_count, replace=True, p=sample_weight)
 
 def convert_from_labelme(img_path, output="train.txt"):
     json_path =  img_path.replace('.jpg', '.json')
